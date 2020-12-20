@@ -24,7 +24,6 @@ module.exports = class QueryBuilder {
 
   sortBy(sort) {
     const { sortBy, orderBy } = sort;
-    console.log(this.#allowedParams);
     if (sortBy && this.#allowedParams.includes(sortBy)) {
       let order = "";
       if (orderBy) {
