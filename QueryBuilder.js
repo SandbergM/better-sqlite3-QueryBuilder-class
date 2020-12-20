@@ -5,16 +5,18 @@ module.exports = class QueryBuilder {
   #pagination = false;
   #limitNumber = false;
   #limitQuery = false;
+  #allowedParams = [];
 
-  constructor(table) {
-    this.#select = ` SELECT * FROM ${table.table} `;
+  constructor({ table, dataType }) {
+    this.#select = ` SELECT * FROM ${table} `;
+    this.#allowedParams = Object.keys(dataType);
   }
 
   addCritera(critera) {
     const { type, params } = critera;
     Object.entries(params).map(([key, val]) => {
       if (val) {
-        this.#search += this.#search ? " AND " : " WHERE ";
+        this.#search += this.#search ? " AND" : " WHERE";
         this.#search += this.#getSearchType(type, key);
       }
     });
@@ -22,12 +24,13 @@ module.exports = class QueryBuilder {
 
   sortBy(sort) {
     const { sortBy, orderBy } = sort;
-    if (sortBy) {
+    console.log(this.#allowedParams);
+    if (sortBy && this.#allowedParams.includes(sortBy)) {
       let order = "";
       if (orderBy) {
-        order = orderBy.toUpperCase() === "ASC" ? "ASC" : "DESC";
+        order = orderBy.toUpperCase() === "ASC" ? " ASC" : " DESC";
       }
-      this.#sortBy = ` ORDER BY ${sortBy} ${order} `;
+      this.#sortBy = ` ORDER BY ${sortBy} ${order}`;
     }
   }
 
@@ -35,14 +38,14 @@ module.exports = class QueryBuilder {
     const { limit } = maxLimit;
     if (limit) {
       this.#limitNumber = limit;
-      this.#limitQuery = ` LIMIT ${limit} `;
+      this.#limitQuery = ` LIMIT ${limit}`;
     }
   }
 
   page(currentPage) {
     const { page } = currentPage;
     if (page) {
-      this.#pagination = ` OFFSET ${(this.#limitNumber || 0) * (page - 1)} `;
+      this.#pagination = ` OFFSET ${(this.#limitNumber || 0) * (page - 1)}`;
     }
   }
 
@@ -59,9 +62,9 @@ module.exports = class QueryBuilder {
   #getSearchType = (type, val) => {
     switch (type) {
       case "LIKE":
-        return ` ${val} LIKE ( '%' || $${val} || '%') `;
+        return ` ${val} LIKE ( '%' || $${val} || '%')`;
       case "EQUAL":
-        return ` ${val} = $${val} `;
+        return ` ${val} = $${val}`;
     }
   };
 };
