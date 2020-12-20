@@ -40,7 +40,7 @@ module.exports = class QueryBuilder {
     const { page } = currentPage;
     if (page) {
       QueryBuilder.#pagination = ` OFFSET ${
-        QueryBuilder.#limitNumber * (page - 1)
+        (QueryBuilder.#limitNumber || 0) * (page - 1)
       } `;
     }
   }
