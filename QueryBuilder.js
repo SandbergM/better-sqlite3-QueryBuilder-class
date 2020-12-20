@@ -1,21 +1,21 @@
 module.exports = class QueryBuilder {
-  static #search = false;
-  static #select = false;
-  static #sortBy = false;
-  static #pagination = false;
-  static #limitNumber = false;
-  static #limitQuery = false;
+  #search = false;
+  #select = false;
+  #sortBy = false;
+  #pagination = false;
+  #limitNumber = false;
+  #limitQuery = false;
 
   constructor(table) {
-    QueryBuilder.#select = ` SELECT * FROM ${table.table} `;
+    this.#select = ` SELECT * FROM ${table.table} `;
   }
 
   addCritera(critera) {
     const { type, params } = critera;
     Object.entries(params).map(([key, val]) => {
       if (val) {
-        QueryBuilder.#search += QueryBuilder.#search ? " AND " : " WHERE ";
-        QueryBuilder.#search += this.#getSearchType(type, key);
+        this.#search += this.#search ? " AND " : " WHERE ";
+        this.#search += this.#getSearchType(type, key);
       }
     });
   }
@@ -23,35 +23,36 @@ module.exports = class QueryBuilder {
   sortBy(sort) {
     const { sortBy, orderBy } = sort;
     if (sortBy) {
-      let order = orderBy.toUpperCase() === "ASC" ? "ASC" : "DESC";
-      QueryBuilder.#sortBy = ` ORDER BY ${sortBy} ${order} `;
+      let order = "";
+      if (orderBy) {
+        order = orderBy.toUpperCase() === "ASC" ? "ASC" : "DESC";
+      }
+      this.#sortBy = ` ORDER BY ${sortBy} ${order} `;
     }
   }
 
   limit(maxLimit) {
     const { limit } = maxLimit;
     if (limit) {
-      QueryBuilder.#limitNumber = limit;
-      QueryBuilder.#limitQuery = ` LIMIT ${limit} `;
+      this.#limitNumber = limit;
+      this.#limitQuery = ` LIMIT ${limit} `;
     }
   }
 
   page(currentPage) {
     const { page } = currentPage;
     if (page) {
-      QueryBuilder.#pagination = ` OFFSET ${
-        (QueryBuilder.#limitNumber || 0) * (page - 1)
-      } `;
+      this.#pagination = ` OFFSET ${(this.#limitNumber || 0) * (page - 1)} `;
     }
   }
 
   run() {
     let assembledQuery = "";
-    assembledQuery += QueryBuilder.#select ? QueryBuilder.#select : "";
-    assembledQuery += QueryBuilder.#search ? QueryBuilder.#search : "";
-    assembledQuery += QueryBuilder.#sortBy ? QueryBuilder.#sortBy : "";
-    assembledQuery += QueryBuilder.#limitQuery ? QueryBuilder.#limitQuery : "";
-    assembledQuery += QueryBuilder.#pagination ? QueryBuilder.#pagination : "";
+    assembledQuery += this.#select ? this.#select : "";
+    assembledQuery += this.#search ? this.#search : "";
+    assembledQuery += this.#sortBy ? this.#sortBy : "";
+    assembledQuery += this.#limitQuery ? this.#limitQuery : "";
+    assembledQuery += this.#pagination ? this.#pagination : "";
     return assembledQuery;
   }
 
