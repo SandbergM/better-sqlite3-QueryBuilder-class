@@ -2,7 +2,7 @@
 
 <p>Very basic class i made to mimic MongoTemplate, but for better-sqlite3 - To generate dynamic queries with pagination and sorting</p>
 
-<h2> Create query a query by selecting what table you are using and what type of data it has, Example - </h2>
+<h2> Create a query by selecting what table you are using and what type of data it has, Example - </h2>
 <p> let query = new QueryBuilder({ table: "users", dataType: new User({}) }) </p>
 
 <h2> Deconstruct your req.query och req.params </h2>
