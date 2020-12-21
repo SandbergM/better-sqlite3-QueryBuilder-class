@@ -1,28 +1,28 @@
 # better-sqlite3-QueryTemplate
 
-<p>Very basic class i made to mimic MongoTemplate, but for better-sqlite3 - To generate dynamic queries with pagination and sorting</p>
+Very basic class i made to mimic MongoTemplate, but for better-sqlite3 - To generate dynamic queries with pagination and sorting
 
-<h2> Create a query by selecting what table you are using and what type of data it has, Example - </h2>
-<p> let query = new QueryBuilder({ table: "users", dataType: new User({}) }) </p>
+Create a query by selecting what table you are using and what type of data it has, Example -
+let query = new QueryBuilder({ table: "users", dataType: new User({}) })
 
-<h2> Deconstruct your req.query och req.params </h2>
+Deconstruct your req.query och req.params
 
-<p>const { username, id, email, firstName, lastName } = req.query;</p>
-<p>const { page, sortBy, orderBy } = req.query;</p>
-  
-<h2> Implement what type of search you want </h2>
+const { username, id, email, firstName, lastName } = req.query;
+const { page, sortBy, orderBy } = req.query;
 
-<h2> Condition : LIKE </h2>
-<p> query.addCritera({ type: "LIKE", params: { firstName, lastName, username } }); </p>
+Implement what type of search you want
 
-<h2> Condition : Equals / = </h2>
-<p> query.addCritera({ type: "EQUAL", params: { id, email } }); </p>
+Condition : LIKE
+query.addCritera({ type: "LIKE", params: { firstName, lastName, username } });
 
-<h2> Pagination / Limit / Sort / Order </h2>
+Condition : Equals / =
+query.addCritera({ type: "EQUAL", params: { id, email } });
 
-<p>query.sortBy({ sortBy: sortBy, orderBy: orderBy });</p>
-<p>query.limit({ limit: 100 });</p>
-<p>query.page({ page: page });</p>
+Pagination / Limit / Sort / Order
 
-<h2> Run the query </h2>
-<p> let statement = db.prepare(query.run()); </p>
+query.sortBy({ sortBy: sortBy, orderBy: orderBy });
+query.limit({ limit: 100 });
+query.page({ page: page });
+
+Run the query
+let statement = db.prepare(query.run());
