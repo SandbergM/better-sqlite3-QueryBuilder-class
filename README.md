@@ -1,6 +1,6 @@
-Very basic class i made to mimic MongoTemplate, but for better-sqlite3 - To generate dynamic queries with pagination and sorting
+Very basic class i made to mimic MongoTemplate, but for better-sqlite3, to generate dynamic queries with pagination and sorting
 
-EXAMPLE
+Example
 ```
 const userSearch = ({ username, email, id, page, sortBy, orderBy }) => {
   let query = new SearchQuery({
