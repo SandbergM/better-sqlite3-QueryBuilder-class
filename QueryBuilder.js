@@ -9,7 +9,7 @@ module.exports = class QueryBuilder {
   #bannedParams = ["password"];
 
   constructor({ LIKE, EQUAL, LIMIT, PAGE, SORT }) {
-    this.#search = this.#searchCriterias({ LIKE, EQUAL }) || "";
+    this.#search = this.#searchCriterias({ LIKE, EQUAL });
     this.#limitQuery = this.#limit(LIMIT) || "";
     this.#pagination = this.#page(PAGE) || "";
     this.#sortByQuery = this.#sortBy(SORT) || "";
@@ -29,7 +29,7 @@ module.exports = class QueryBuilder {
   }
 
   #sortBy({ sortBy, orderBy }) {
-    if (this.#bannedParams.includes(sortBy)) return;
+    if (this.#bannedParams.includes(sortBy)) return "";
     if (sortBy) {
       let order = "";
       if (orderBy) {
@@ -53,11 +53,11 @@ module.exports = class QueryBuilder {
   }
 
   run() {
-    this.#query += this.#select !== "" ? this.#select : "";
-    this.#query += this.#search !== "" ? this.#search : "";
-    this.#query += this.#sortByQuery !== "" ? this.#sortByQuery : "";
-    this.#query += this.#limitQuery !== "" ? this.#limitQuery : "";
-    this.#query += this.#pagination !== "" ? this.#pagination : "";
+    this.#query += this.#select;
+    this.#query += this.#search;
+    this.#query += this.#sortByQuery;
+    this.#query += this.#limitQuery;
+    this.#query += this.#pagination;
     return this.#query;
   }
 
