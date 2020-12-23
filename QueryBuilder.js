@@ -1,69 +1,72 @@
 module.exports = class QueryBuilder {
-  #search = false;
-  #select = false;
-  #sortBy = false;
-  #pagination = false;
-  #limitNumber = false;
-  #limitQuery = false;
-  #allowedParams = [];
+  #search = "";
+  #query = "";
+  #select = "";
+  #sortByQuery = "";
+  #pagination = "";
+  #limitNumber = "";
+  #limitQuery = "";
+  #bannedParams = ["password"];
 
-  constructor({ table, dataType }) {
-    this.#select = ` SELECT * FROM ${table} `;
-    this.#allowedParams = Object.keys(dataType);
+  constructor({ LIKE, EQUAL, LIMIT, PAGE, SORT }) {
+    this.#search = this.#searchCriterias({ LIKE, EQUAL }) || "";
+    this.#limitQuery = this.#limit(LIMIT) || "";
+    this.#pagination = this.#page(PAGE) || "";
+    this.#sortByQuery = this.#sortBy(SORT) || "";
   }
 
-  addCritera(critera) {
-    const { type, params } = critera;
-    Object.entries(params).map(([key, val]) => {
-      if (val) {
-        this.#search += this.#search ? " AND" : " WHERE";
-        this.#search += this.#getSearchType(type, key);
-      }
+  #searchCriterias(criteras) {
+    let res = "";
+    Object.entries(criteras).map(([type, params]) => {
+      Object.entries(params).map(([key, val]) => {
+        if (val) {
+          res += res.length ? `AND ` : `WHERE `;
+          res += this.#getSearchType(type, key);
+        }
+      });
     });
+    return res;
   }
 
-  sortBy(sort) {
-    const { sortBy, orderBy } = sort;
-    if (sortBy && this.#allowedParams.includes(sortBy)) {
+  #sortBy({ sortBy, orderBy }) {
+    if (this.#bannedParams.includes(sortBy)) return;
+    if (sortBy) {
       let order = "";
       if (orderBy) {
         order = orderBy.toUpperCase() === "ASC" ? " ASC" : " DESC";
       }
-      this.#sortBy = ` ORDER BY ${sortBy} ${order}`;
+      return `ORDER BY ${sortBy} ${order} `;
     }
   }
 
-  limit(maxLimit) {
-    const { limit } = maxLimit;
+  #limit(limit) {
     if (limit) {
       this.#limitNumber = limit;
-      this.#limitQuery = ` LIMIT ${limit}`;
+      return `LIMIT ${limit} `;
     }
   }
 
-  page(currentPage) {
-    const { page } = currentPage;
+  #page({ page }) {
     if (page) {
-      this.#pagination = ` OFFSET ${(this.#limitNumber || 0) * (page - 1)}`;
+      return `OFFSET ${(this.#limitNumber || 0) * (page - 1)} `;
     }
   }
 
   run() {
-    let assembledQuery = "";
-    assembledQuery += this.#select ? this.#select : "";
-    assembledQuery += this.#search ? this.#search : "";
-    assembledQuery += this.#sortBy ? this.#sortBy : "";
-    assembledQuery += this.#limitQuery ? this.#limitQuery : "";
-    assembledQuery += this.#pagination ? this.#pagination : "";
-    return assembledQuery;
+    this.#query += this.#select !== "" ? this.#select : "";
+    this.#query += this.#search !== "" ? this.#search : "";
+    this.#query += this.#sortByQuery !== "" ? this.#sortByQuery : "";
+    this.#query += this.#limitQuery !== "" ? this.#limitQuery : "";
+    this.#query += this.#pagination !== "" ? this.#pagination : "";
+    return this.#query;
   }
 
   #getSearchType = (type, val) => {
     switch (type) {
       case "LIKE":
-        return ` ${val} LIKE ( '%' || $${val} || '%')`;
+        return `${val} LIKE ( '%' || $${val} || '%') `;
       case "EQUAL":
-        return ` ${val} = $${val}`;
+        return `${val} = $${val} `;
     }
   };
 };
