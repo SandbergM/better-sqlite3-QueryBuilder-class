@@ -17,3 +17,8 @@ const userSearch = ({ username, email, id, page, sortBy, orderBy }) => {
   return users;
 };
 ```
+
+Result 
+```
+"SELECT * FROM users WHERE username LIKE ( '%' || $username || '%') AND id = $id ORDER BY createdOn  DESC LIMIT 100 OFFSET 0"
+```
