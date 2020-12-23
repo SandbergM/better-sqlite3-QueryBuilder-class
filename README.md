@@ -1,7 +1,7 @@
 Very basic class i made to mimic MongoTemplate, but for better-sqlite3 - To generate dynamic queries with pagination and sorting
 
-``
 EXAMPLE
+```
 const userSearch = ({ username, email, id, page, sortBy, orderBy }) => {
   let query = new SearchQuery({
     LIKE: { username },
@@ -16,4 +16,4 @@ const userSearch = ({ username, email, id, page, sortBy, orderBy }) => {
 
   return users;
 };
-``
+```
