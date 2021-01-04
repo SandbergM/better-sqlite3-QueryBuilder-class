@@ -3,16 +3,15 @@ Very basic class i made to mimic MongoTemplate, but for better-sqlite3, to gener
 Example
 ```
 const userSearch = ({ username, email, id, page, sortBy, orderBy }) => {
-  let query = new SearchQuery({
+  const { username, email, id, page, sortBy, orderBy } = params;
+  let users = new SearchQuery({
+    TABLE: "users",
     LIKE: { username },
     EQUAL: { email, id },
     LIMIT: 100,
     PAGE: { page },
     SORT: { sortBy, orderBy },
-  });
-
-  let statement = db.prepare(` SELECT * FROM users ${query.run()} `);
-  let users = statement.all({ username, email, id, page });
+  }).run();
 
   return users;
 };
